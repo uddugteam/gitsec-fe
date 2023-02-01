@@ -1,4 +1,6 @@
-const Alert = ({text, type, closeAlert}: {text: string, type: string, closeAlert: Function}) => {
+import {MouseEventHandler} from "react";
+
+const Alert = ({text, type, closeAlert}: {text: string, type: string, closeAlert: MouseEventHandler}) => {
     return (
         <div className={`alert alert-${type} alert-dismissible`} role="alert">
             {text}
