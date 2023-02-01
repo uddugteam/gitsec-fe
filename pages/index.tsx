@@ -1,6 +1,7 @@
 import Layout from "@/components/Layout";
 import Link from "next/link";
 import RepositoryList from "@/components/repositories/RepositoryList";
+import {getName} from "@/helpers/contractHelpers";
 
 export default function Home() {
     const links =
@@ -13,6 +14,7 @@ export default function Home() {
             <h2 className={"mt-3"}>All Repositories</h2>
             <Link className={"btn btn-success mt-3"} href={"/new"}>New repository</Link><br/>
             <RepositoryList/>
+            <button className={"btn btn-primary"} onClick={() => getName()}>Get contract name (test)</button>
         </Layout>
     )
 }
