@@ -11,10 +11,14 @@ const Navbar = ({links}: {links: ReactNode}) => {
 
     useEffect(() => {
         // @ts-ignore
-        window.ethereum.on("accountsChanged", getAndSetSignerAddress)
-        return () =>
+        if (window.ethereum) {
             // @ts-ignore
-            window.ethereum.removeListener("accountsChanged", getAndSetSignerAddress)
+            window.ethereum.on("accountsChanged", getAndSetSignerAddress)
+            return () =>
+                // @ts-ignore
+                window.ethereum.removeListener("accountsChanged", getAndSetSignerAddress)
+        }
+
     }, [])
 
     const getAndSetSignerAddress = () => {

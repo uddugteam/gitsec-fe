@@ -1,10 +1,39 @@
 import Layout from "@/components/Layout";
 import Link from "next/link";
-import {useState} from "react";
+import {FormEvent, useState} from "react";
+import {createRepo} from "@/helpers/contractHelpers";
+import Alert from "@/components/alerts/Alert";
 
 const New = () => {
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
+    const [isAlert, setIsAlert] = useState(false);
+    const [alertType, setAlertType] = useState("");
+    const [alertText, setAlertText] = useState("");
+
+    const handleCloseAlert = () => {
+        setAlertText("");
+        setAlertType("");
+        setIsAlert(false);
+    }
+
+    const handleNewRepository = async (event: FormEvent) => {
+        event.preventDefault();
+
+        const result = await createRepo(name, description);
+
+        if (result.ok) {
+            setAlertType("success");
+            setAlertText("Repository created!");
+            setIsAlert(true);
+            setName("");
+            setDescription("");
+        } else {
+            setAlertType("danger");
+            setAlertText("Error, please try again");
+            setIsAlert(true);
+        }
+    }
 
     const links =
         <ol className="breadcrumb">
@@ -14,11 +43,12 @@ const New = () => {
 
     return (
         <Layout links={links}>
+            {isAlert && <Alert closeAlert={handleCloseAlert} type={alertType} text={alertText}/>}
             <h2 className={"mt-3"}>Create new repository</h2>
             <p className={"mt-3"}>A repository contains all project files, including the revision history. Already have a project
                 repository elsewhere? <Link href={"/import"}>Import a repository.</Link></p>
             <hr/>
-            <form>
+            <form onSubmit={event => handleNewRepository(event)}>
                 <div className={"input-group mt-3"}>
                     <input type="text" className="form-control" disabled={true} value={"Uddugteam"}/>
                     <span className="input-group-text">/</span>
