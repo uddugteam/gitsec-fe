@@ -7,12 +7,20 @@ export const connect = async () => {
 
     if (isInstalled) {
         if (await _isNetworkValid(metamask)) {
-            await metamask.request({ method: 'eth_requestAccounts' });
+
+            try {
+                await metamask.request({ method: 'eth_requestAccounts' });
+            } catch (error) {
+                return null;
+            }
+
             return metamask;
         }
+    } else {
+        alert("Please install metamask");
     }
 
-    return metamask;
+    return null;
 }
 
 export const getSignerAddress = async () => {
@@ -49,11 +57,16 @@ export const getContractWithSigner = async () => {
         const provider = new ethers.providers.Web3Provider(metamask);
         const signer = await provider.getSigner();
 
-        return new ethers.Contract(
-            process.env.NEXT_PUBLIC_GITSEC_ADDRESS as string,
-            Gitsec.abi,
-            signer
-        );
+        if (signer) {
+            return new ethers.Contract(
+                process.env.NEXT_PUBLIC_GITSEC_ADDRESS as string,
+                Gitsec.abi,
+                signer
+            );
+        } else {
+            alert("Please connect");
+            return null;
+        }
     }
 
     return null;
@@ -64,7 +77,6 @@ const _getMatamask = () => {
     const {ethereum} = window;
 
     if (!ethereum || !ethereum.isMetaMask) {
-        alert("Please install metamask");
         console.error("Ethereum not found in browser or it is not Metamask");
         return {
             isInstalled: false,
