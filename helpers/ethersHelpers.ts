@@ -16,7 +16,7 @@ export const connect = async () => {
 }
 
 export const getContractWithoutSigner = () => {
-    const provider = new ethers.providers.JsonRpcProvider("https://rpc.chiadochain.net");
+    const provider = new ethers.providers.JsonRpcProvider(process.env.NEXT_PUBLIC_PROVIDER_URL);
     return new ethers.Contract(
         process.env.NEXT_PUBLIC_GITSEC_ADDRESS as string,
         Gitsec.abi,
