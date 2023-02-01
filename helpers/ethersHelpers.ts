@@ -12,6 +12,24 @@ export const connect = async () => {
         }
     }
 
+    return metamask;
+}
+
+export const getSignerAddress = async () => {
+    const {isInstalled, metamask} = _getMatamask();
+
+    if (isInstalled) {
+        const provider = new ethers.providers.Web3Provider(metamask);
+        const signer = await provider.getSigner();
+        try{
+            const signerAddress = await signer.getAddress();
+            return signerAddress.toString();
+        } catch (e) {
+            console.error(`Get signer address error: ${e}`);
+            return null;
+        }
+    }
+
     return null;
 }
 
