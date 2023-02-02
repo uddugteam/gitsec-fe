@@ -17,32 +17,44 @@ export const createRepo = async (name: string, description: string) => {
     return {ok: false};
 }
 
+export const getRepository = async (id: string) => {
+    const contract = getContractWithoutSigner();
+    if (contract) {
+        const repo = await contract.getRepository(id);
+        return {
+            id: repo.id.toString(),
+            owner: repo.owner,
+            name: repo.name,
+            description: repo.description,
+            ipfs: repo.ipfs,
+        }
+    }
+
+    return {
+        id: "-",
+        owner: "-",
+        name: "-",
+        description: "-",
+        ipfs: "-",
+    };
+}
+
 export const getAllRepositories = async () => {
     const contract = getContractWithoutSigner();
-    let allRepo: RepositoryType[] = [];
 
     if (contract) {
         const repos = await contract.getAllRepositories();
 
         if (repos) {
-            for (const repo of repos) {
-                allRepo.push({
-                    id: repo.id.toString(),
-                    owner: repo.owner,
-                    name: repo.name,
-                    description: repo.description,
-                    ipfs: repo.ipfs,
-                })
-            }
+            return _createRepoArr(repos);
         }
     }
 
-    return allRepo;
+    return [];
 }
 
 export const getUserRepositories = async () => {
     const contract = getContractWithoutSigner();
-    let userRepos: RepositoryType[] = [];
 
     if (contract) {
         const signer = await getSignerAddress();
@@ -51,17 +63,25 @@ export const getUserRepositories = async () => {
             const repos = await contract.getUserRepositories(signer);
 
             if (repos) {
-                for (const repo of repos) {
-                    userRepos.push({
-                        id: repo.id.toString(),
-                        owner: repo.owner,
-                        name: repo.name,
-                        description: repo.description,
-                        ipfs: repo.ipfs,
-                    })
-                }
+                return _createRepoArr(repos);
             }
         }
+    }
+
+    return [];
+}
+
+const _createRepoArr = (repos: RepositoryType[]) => {
+    let userRepos: RepositoryType[] = [];
+
+    for (const repo of repos) {
+        userRepos.push({
+            id: repo.id.toString(),
+            owner: repo.owner,
+            name: repo.name,
+            description: repo.description,
+            ipfs: repo.ipfs,
+        })
     }
 
     return userRepos;
