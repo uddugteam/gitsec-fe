@@ -1,22 +1,13 @@
-import Link from "next/link";
-import {AiOutlineFileText, AiOutlineFolder} from "react-icons/ai";
+import {IpfsType} from "@/types/ipfsType";
+import FileRow from "@/components/repository/FileRow";
 
-const FilesList = () => {
+const FilesList = ({ipfs}: {ipfs: IpfsType}) => {
     return (
         <table className="table mt-3">
             <tbody>
-            <tr>
-                <td><AiOutlineFolder className={"h4 text-muted"}/></td>
-                <th scope="row"><Link href={"#"}>Folder</Link></th>
-                <td className={"w-75 text-center text-muted"}>Commit info</td>
-                <td className={"text-muted"}>5 minutes ago</td>
-            </tr>
-            <tr>
-                <td><AiOutlineFileText className={"h4 text-muted"}/></td>
-                <th scope="row"><Link href={"/repository/1/filename"}>File name</Link></th>
-                <td className={"w-75 text-center text-muted"}>Commit info</td>
-                <td className={"text-muted"}>5 minutes ago</td>
-            </tr>
+            {ipfs.content.map((value, index) =>
+                <FileRow hash={value.hash} name={value.name} key={index}/>
+            )}
             </tbody>
         </table>
     );
