@@ -2,37 +2,17 @@ import Layout from "@/components/Layout";
 import Link from "next/link";
 import FilesList from "@/components/repository/FilesList";
 import RepositoryLayout from "@/components/repository/RepositoryLayout";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import {RepositoryType} from "@/types/repositoryType";
 import {getRepository} from "@/helpers/contractHelpers";
-import {useRouter} from "next/router";
 import QuickSetup from "@/components/repository/QuickSetup";
+import {GetServerSideProps} from "next";
+import {IpfsType} from "@/types/ipfsType";
 
-const initialRepo = {
-    id: "-",
-    owner: "-",
-    name: "-",
-    description: "-",
-    ipfs: "-",
-}
 
-const RepoId = () => {
-    const router = useRouter();
-    const [repository, setRepository] = useState<RepositoryType>(initialRepo);
-    const [id, setId] = useState("");
-    const [isRepositorySet, setIsRepositorySet] = useState(false);
-
-    useEffect(() => {
-        if (router.query.repoId) {
-            setId(router.query.repoId.toString());
-        }
-    }, [router])
-
-    useEffect(() => {
-        if (id !== "") {
-            getRepository(id.toString()).then(r => setRepository(r)).then(() => setIsRepositorySet(true))
-        }
-    }, [id, setRepository])
+const RepoId = ({data}: {data: Data}) => {
+    const [repository] = useState(data.repo);
+    const [ipfs] = useState(data.ipfs)
 
     const links =
         <ol className="breadcrumb">
@@ -43,10 +23,31 @@ const RepoId = () => {
     return (
         <Layout links={links}>
             <RepositoryLayout repository={repository}>
-                <>{isRepositorySet ? repository.ipfs ? <FilesList/> : <QuickSetup/> : <p className={"mt-3"}>Loading...</p>}</>
+                <>{repository ? ipfs.content.length > 0 ? <FilesList ipfs={ipfs}/> : <QuickSetup/> : <p className={"mt-3"}>Loading...</p>}</>
             </RepositoryLayout>
         </Layout>
     );
 };
+
+type Data = {
+    repo: RepositoryType,
+    ipfs: IpfsType
+}
+
+export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (context) => {
+    const id = await context.query.repoId;
+
+    const repo = await getRepository(id ? id.toString() : "0");
+    const res = await fetch(`https://gateway.pinata.cloud/ipfs/${repo.ipfs}`);
+    const ipfs = await JSON.parse(await res.text());
+    return {
+        props: {
+            data: {
+                ipfs: ipfs,
+                repo: repo,
+            },
+        },
+    }
+}
 
 export default RepoId;

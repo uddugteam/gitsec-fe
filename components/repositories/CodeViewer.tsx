@@ -1,8 +1,22 @@
-const CodeViewer = () => {
+import SyntaxHighlighter from 'react-syntax-highlighter';
+
+const languages = {
+    md: "markdown",
+    ts: "typescript",
+    js: "javascript",
+    json: "json",
+}
+
+const CodeViewer = ({code, name}: {code: string, name: string}) => {
+    const extension = name.split('.').slice(-1)[0];
+    // @ts-ignore
+    let lang = languages[extension];
+    lang = lang ? lang : "javascript";
+
     return (
-        <h4 className={"mt-3"}>
-           Code Viewer
-        </h4>
+        <SyntaxHighlighter language={lang}>
+            {code}
+        </SyntaxHighlighter>
     );
 };
 

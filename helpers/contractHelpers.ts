@@ -26,7 +26,7 @@ export const getRepository = async (id: string) => {
             owner: repo.owner,
             name: repo.name,
             description: repo.description,
-            ipfs: repo.ipfs,
+            ipfs: repo.IPFS,
         }
     }
 
