@@ -9,9 +9,6 @@ const RepositoryLayout = (
             <h2>{repository.name}</h2>
             <div className={"container row"}>
                 <div className={"col-9"}>
-                    <div className={"row"}>
-                        <button className={"col-lg-1 btn btn-secondary mt-3"}>Main</button>
-                    </div>
                     <div className={"row bg-secondary text-white mt-3 p-3 rounded-2"}>
                         <div className={"col"}>Author</div>
                         <div className={"col-auto"}>2bbea2c</div>
@@ -23,7 +20,7 @@ const RepositoryLayout = (
                     </div>
                 </div>
                 <div className={"col-3"}>
-                    <div className={"card m-2"}>
+                    <div className={"card m-3"}>
                         <div className={"card-header"}>
                             <h4>About</h4>
                         </div>
