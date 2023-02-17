@@ -14,7 +14,7 @@ const CodeViewer = ({code, name}: {code: string, name: string}) => {
     lang = lang ? lang : "javascript";
 
     return (
-        <SyntaxHighlighter language={lang}>
+        <SyntaxHighlighter language={lang} showLineNumbers={true}>
             {code}
         </SyntaxHighlighter>
     );
