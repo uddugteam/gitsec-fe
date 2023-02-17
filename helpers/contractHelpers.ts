@@ -1,6 +1,22 @@
 import {getContractWithoutSigner, getContractWithSigner, getSignerAddress} from "@/helpers/ethersHelpers";
 import {RepositoryType} from "@/types/repositoryType";
 
+export const deleteRepository = async (id: string) => {
+    const contract = await getContractWithSigner();
+
+    if (contract) {
+        try {
+            const tx = await contract.deleteRepository(id);
+            await tx.wait();
+            return {ok: true}
+        } catch (error) {
+            console.error(`Delete repo error: ${error}`)
+        }
+    }
+
+    return {ok: false}
+}
+
 export const createRepo = async (name: string, description: string) => {
     const contract = await getContractWithSigner();
 
