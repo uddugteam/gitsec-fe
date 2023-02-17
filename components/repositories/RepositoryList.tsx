@@ -5,7 +5,7 @@ import {useEffect, useState} from "react";
 import {getAllRepositories} from "@/helpers/contractHelpers";
 import {getSignerAddress} from "@/helpers/ethersHelpers";
 
-const RepositoryList = () => {
+const RepositoryList = ({handleDeleteRepository}: {handleDeleteRepository: Function}) => {
     const [allRepositories, setAllRepositories] = useState<RepositoryType[] | []>([]);
     const [signerAddress, setSignerAddress] = useState<string | null>("");
     const [isAllRepositoriesSet, setIsAllRepositoriesSet] = useState(false);
@@ -26,8 +26,10 @@ const RepositoryList = () => {
                             <tr key={repo.id}>
                                 <th scope="row"><Link href={`/repository/${repo.id}`}>{repo.name}</Link></th>
                                 <td className={"w-75"}>5 minutes ago</td>
-                                {signerAddress === repo.owner && <td><button className={"btn btn-danger"}>Delete</button></td>
-                                }
+                                <td><button
+                                    className={"btn btn-danger"}
+                                    disabled={signerAddress !== repo.owner}
+                                    onClick={() => handleDeleteRepository(repo.id)}>Delete</button></td>
                             </tr>
                         )}
                         </tbody>
