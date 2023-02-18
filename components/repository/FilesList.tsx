@@ -6,7 +6,7 @@ const FilesList = ({ipfs, setLoading}: {ipfs: IpfsType, setLoading: Function}) =
         <table className="table mt-3">
             <tbody>
             {ipfs.content.map((value, index) =>
-                <FileRow hash={value.hash} name={value.name} setLoading={setLoading} key={index}/>
+                <FileRow hash={value.hash} name={value.name} commit={value.commit} timestamp={value.timestamp} setLoading={setLoading} key={index}/>
             )}
             </tbody>
         </table>
