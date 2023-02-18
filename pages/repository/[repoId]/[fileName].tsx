@@ -48,11 +48,11 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (con
     const id = await context.query.repoId;
 
     const repo = await getRepository(id ? id.toString() : "0");
-    const res = await fetch(`https://gateway.pinata.cloud/ipfs/${hash}`);
+    const res = await fetch(`${process.env.IPFS_PROVIDER}/${hash}`);
     const resJson = await JSON.parse(await res.text());
     const name = resJson.name;
     const author = resJson.author;
-    const res2 = await fetch(`https://gateway.pinata.cloud/ipfs/${resJson.hash}`);
+    const res2 = await fetch(`${process.env.IPFS_PROVIDER}/${resJson.hash}`);
     const ipfs = await res2.text();
     return {
         props: {

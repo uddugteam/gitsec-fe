@@ -9,6 +9,7 @@ import QuickSetup from "@/components/repository/QuickSetup";
 import {GetServerSideProps} from "next";
 import {IpfsType} from "@/types/ipfsType";
 import Loading from "@/components/Loading";
+import * as process from "process";
 
 
 const RepoId = ({data}: {data: Data}) => {
@@ -22,13 +23,11 @@ const RepoId = ({data}: {data: Data}) => {
             <li className="breadcrumb-item active">{repository.name}</li>
         </ol>;
 
-
-
     return (
         <>
             {!loading ? <Layout links={links}>
             <RepositoryLayout repository={repository} ipfs={ipfs} author={null}>
-                <>{ipfs.content.length > 0 ? <FilesList ipfs={ipfs} setLoading={setLoading}/> : <QuickSetup/>}</>
+                <>{ipfs.content.length > 0 ? <FilesList ipfs={ipfs} setLoading={setLoading}/> : <QuickSetup url={ipfs.external_url}/>}</>
             </RepositoryLayout>
         </Layout> : <Loading/>}
         </>
@@ -40,31 +39,18 @@ type Data = {
     ipfs: IpfsType
 }
 
-const zeroIpfs: IpfsType = {
-    name: "",
-    external_url: "",
-    description: "",
-    content: [],
-    commit: "",
-    timestamp: "",
-    commits_count: ""
-}
 
 export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (context) => {
     const id = await context.query.repoId;
 
-    const repo = await getRepository(id ? id.toString() : "0");
-    if (repo.ipfs === '') {
-        return {
-            props: {
-                data: {
-                    ipfs: zeroIpfs,
-                    repo: repo,
-                }
-            }
+    if (id) {
+        let repo = await getRepository(id.toString());
+
+        while (repo.ipfs === '') {
+            repo = await getRepository(id.toString());
         }
-    } else {
-        const res = await fetch(`https://gateway.pinata.cloud/ipfs/${repo.ipfs}`);
+
+        const res = await fetch(`${process.env.IPFS_PROVIDER}/${repo.ipfs}`);
         const ipfs = await JSON.parse(await res.text());
         return {
             props: {
@@ -73,6 +59,13 @@ export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (con
                     repo: repo,
                 },
             },
+        }
+    } else {
+        return {
+            redirect: {
+                destination: "/",
+                permanent: false
+            }
         }
     }
 }
