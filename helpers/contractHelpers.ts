@@ -43,6 +43,7 @@ export const getRepository = async (id: string) => {
             name: repo.name,
             description: repo.description,
             ipfs: repo.IPFS,
+            lastUpdate: repo.lastUpdate.toString()
         }
     }
 
@@ -52,6 +53,7 @@ export const getRepository = async (id: string) => {
         name: "-",
         description: "-",
         ipfs: "-",
+        lastUpdate: '-',
     };
 }
 
@@ -97,6 +99,7 @@ const _createRepoArr = (repos: RepositoryType[]) => {
             name: repo.name,
             description: repo.description,
             ipfs: repo.ipfs,
+            lastUpdate: repo.lastUpdate.toString()
         })
     }
 
