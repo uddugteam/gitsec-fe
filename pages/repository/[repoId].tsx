@@ -22,11 +22,13 @@ const RepoId = ({data}: {data: Data}) => {
             <li className="breadcrumb-item active">{repository.name}</li>
         </ol>;
 
+
+
     return (
         <>
             {!loading ? <Layout links={links}>
-            <RepositoryLayout repository={repository}>
-                <>{repository ? ipfs.content.length > 0 ? <FilesList ipfs={ipfs} setLoading={setLoading}/> : <QuickSetup/> : <p className={"mt-3"}>Loading...</p>}</>
+            <RepositoryLayout repository={repository} ipfs={ipfs} author={null}>
+                <>{ipfs.content.length > 0 ? <FilesList ipfs={ipfs} setLoading={setLoading}/> : <QuickSetup/>}</>
             </RepositoryLayout>
         </Layout> : <Loading/>}
         </>
@@ -38,19 +40,40 @@ type Data = {
     ipfs: IpfsType
 }
 
+const zeroIpfs: IpfsType = {
+    name: "",
+    external_url: "",
+    description: "",
+    content: [],
+    commit: "",
+    timestamp: "",
+    commits_count: ""
+}
+
 export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (context) => {
     const id = await context.query.repoId;
 
     const repo = await getRepository(id ? id.toString() : "0");
-    const res = await fetch(`https://gateway.pinata.cloud/ipfs/${repo.ipfs}`);
-    const ipfs = await JSON.parse(await res.text());
-    return {
-        props: {
-            data: {
-                ipfs: ipfs,
-                repo: repo,
+    if (repo.ipfs === '') {
+        return {
+            props: {
+                data: {
+                    ipfs: zeroIpfs,
+                    repo: repo,
+                }
+            }
+        }
+    } else {
+        const res = await fetch(`https://gateway.pinata.cloud/ipfs/${repo.ipfs}`);
+        const ipfs = await JSON.parse(await res.text());
+        return {
+            props: {
+                data: {
+                    ipfs: ipfs,
+                    repo: repo,
+                },
             },
-        },
+        }
     }
 }
 
