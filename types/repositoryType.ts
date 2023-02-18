@@ -4,4 +4,5 @@ export interface RepositoryType {
     name: string,
     description: string,
     ipfs: string,
+    lastUpdate: string,
 }
