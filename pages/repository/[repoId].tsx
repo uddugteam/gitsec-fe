@@ -8,11 +8,13 @@ import {getRepository} from "@/helpers/contractHelpers";
 import QuickSetup from "@/components/repository/QuickSetup";
 import {GetServerSideProps} from "next";
 import {IpfsType} from "@/types/ipfsType";
+import Loading from "@/components/Loading";
 
 
 const RepoId = ({data}: {data: Data}) => {
     const [repository] = useState(data.repo);
-    const [ipfs] = useState(data.ipfs)
+    const [ipfs] = useState(data.ipfs);
+    const [loading, setLoading] = useState(false);
 
     const links =
         <ol className="breadcrumb">
@@ -21,11 +23,13 @@ const RepoId = ({data}: {data: Data}) => {
         </ol>;
 
     return (
-        <Layout links={links}>
+        <>
+            {!loading ? <Layout links={links}>
             <RepositoryLayout repository={repository}>
-                <>{repository ? ipfs.content.length > 0 ? <FilesList ipfs={ipfs}/> : <QuickSetup/> : <p className={"mt-3"}>Loading...</p>}</>
+                <>{repository ? ipfs.content.length > 0 ? <FilesList ipfs={ipfs} setLoading={setLoading}/> : <QuickSetup/> : <p className={"mt-3"}>Loading...</p>}</>
             </RepositoryLayout>
-        </Layout>
+        </Layout> : <Loading/>}
+        </>
     );
 };
 
