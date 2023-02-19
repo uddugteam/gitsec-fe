@@ -5,7 +5,7 @@ import {forkRepo} from "@/helpers/contractHelpers";
 import Loading from "@/components/Loading";
 import Alert from "@/components/alerts/Alert";
 
-const Import = () => {
+const Fork = () => {
     const [url, setUrl] = useState("");
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
@@ -93,4 +93,4 @@ const Import = () => {
     );
 };
 
-export default Import;
+export default Fork;
