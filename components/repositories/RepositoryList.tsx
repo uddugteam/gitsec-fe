@@ -7,6 +7,9 @@ const RepositoryList = (
     {handleDeleteRepository, allRepositories, signerAddress, setLoading}:
         {handleDeleteRepository: Function, allRepositories: RepositoryType[] | [], signerAddress: string | null, setLoading: Function}
 ) => {
+
+    allRepositories.sort((a, b) => {return Number(b.lastUpdate) - Number(a.lastUpdate)})
+
     return (
         <>
             { allRepositories.length > 0
