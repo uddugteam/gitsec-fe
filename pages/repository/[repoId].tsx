@@ -25,11 +25,12 @@ const RepoId = ({data}: {data: Data}) => {
 
     return (
         <>
-            {!loading ? <Layout links={links}>
-            <RepositoryLayout repository={repository} ipfs={ipfs} author={null}>
-                <>{ipfs.content.length > 0 ? <FilesList ipfs={ipfs} setLoading={setLoading}/> : <QuickSetup url={ipfs.external_url}/>}</>
-            </RepositoryLayout>
-        </Layout> : <Loading/>}
+            <Loading show={loading}/>
+            <Layout links={links}>
+                <RepositoryLayout repository={repository} ipfs={ipfs} author={null}>
+                    <>{ipfs.content.length > 0 ? <FilesList ipfs={ipfs} setLoading={setLoading}/> : <QuickSetup url={ipfs.external_url}/>}</>
+                </RepositoryLayout>
+            </Layout>
         </>
     );
 };

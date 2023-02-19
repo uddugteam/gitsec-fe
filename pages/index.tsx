@@ -51,13 +51,21 @@ export default function Home() {
             <li className="breadcrumb-item active">Uddugteam</li>
         </ol>;
 
-    return (<>
-        {!loading ?         <Layout links={links}>
+    return (
+        <>
+            <Loading show={loading}/>
+            <Layout links={links}>
                 {isAlert && <Alert closeAlert={handleCloseAlert} type={alertType} text={alertText}/>}
                 <h2 className={"mt-3"}>All Repositories</h2>
                 <Link className={"btn btn-success mt-3"} href={"/new"}>New repository</Link><br/>
-                <RepositoryList handleDeleteRepository={handleDeleteRepository} allRepositories={allRepositories} signerAddress={signerAddress} setLoading={setLoading}/>
+                <RepositoryList
+                    handleDeleteRepository={handleDeleteRepository}
+                    allRepositories={allRepositories}
+                    signerAddress={signerAddress}
+                    setLoading={setLoading}
+                    loading={loading}
+                />
             </Layout>
-        : <Loading/>}</>
+        </>
     )
 }

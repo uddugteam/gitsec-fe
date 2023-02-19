@@ -4,8 +4,8 @@ import {RepositoryType} from "@/types/repositoryType";
 import {getTimeDifference} from "@/helpers/getTimeDifference";
 
 const RepositoryList = (
-    {handleDeleteRepository, allRepositories, signerAddress, setLoading}:
-        {handleDeleteRepository: Function, allRepositories: RepositoryType[] | [], signerAddress: string | null, setLoading: Function}
+    {handleDeleteRepository, allRepositories, signerAddress, setLoading, loading}:
+        {handleDeleteRepository: Function, allRepositories: RepositoryType[] | [], signerAddress: string | null, setLoading: Function, loading: boolean}
 ) => {
 
     allRepositories.sort((a, b) => {return Number(b.lastUpdate) - Number(a.lastUpdate)})
@@ -28,7 +28,7 @@ const RepositoryList = (
                     )}
                     </tbody>
                 </RepositoryTable>
-                : <h4 className={"m-3"}>No repositories found...</h4>}
+                : loading ? null : <h4 className={"m-3"}>No repositories found...</h4>}
         </>
     );
 };
