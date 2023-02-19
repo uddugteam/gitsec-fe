@@ -10,9 +10,6 @@ const RepositoryList = (
 
     allRepositories.sort((a, b) => {return Number(b.lastUpdate) - Number(a.lastUpdate)})
 
-    const test = "https://github.com/uddugteam/gitsec-front".split('https://')
-    console.log(test[1])
-
     return (
         <>
             { allRepositories.length > 0
