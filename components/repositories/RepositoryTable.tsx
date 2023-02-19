@@ -2,7 +2,7 @@ import {ReactNode} from "react";
 
 const RepositoryTable = ({children}: {children: ReactNode}) => {
     return (
-        <table className="table mt-3">
+        <table className="table mt-3 mb-5">
             <thead>
             <tr>
                 <th scope="col">Name</th>
