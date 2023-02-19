@@ -48,7 +48,8 @@ const New = () => {
 
     return (
         <>
-            {!loading ? <Layout links={links}>
+            <Loading show={loading}/>
+            <Layout links={links}>
                 {isAlert && <Alert closeAlert={handleCloseAlert} type={alertType} text={alertText}/>}
                 <h2 className={"mt-3"}>Create new repository</h2>
                 <p className={"mt-3"}>A repository contains all project files, including the revision history. Already have a project
@@ -78,7 +79,8 @@ const New = () => {
                     />
                     <button className={"btn btn-success mt-4"} type={"submit"}>Create</button>
                 </form>
-            </Layout> : <Loading/>}</>
+            </Layout>
+        </>
     );
 };
 

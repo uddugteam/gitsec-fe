@@ -26,11 +26,12 @@ const FileName = ({data}: {data: Data}) => {
 
     return (
         <>
-            {loading ? <Loading/> : <Layout links={links}>
+            <Loading show={loading}/>
+            <Layout links={links}>
                 <RepositoryLayout repository={repo} ipfs={fileIpfs} author={author}>
                     {ipfs ? <CodeViewer code={ipfs} name={name}/> : <p>Loading...</p>}
                 </RepositoryLayout>
-            </Layout>}
+            </Layout>
         </>
     );
 };
