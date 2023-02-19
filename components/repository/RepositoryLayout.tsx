@@ -1,10 +1,11 @@
-import {ReactNode} from "react";
+import {ReactNode, useState} from "react";
 import {RepositoryType} from "@/types/repositoryType";
 import {IpfsType} from "@/types/ipfsType";
 
 const RepositoryLayout = (
     {children, repository, ipfs, author}: {children: ReactNode, repository: RepositoryType, ipfs: IpfsType, author: string | null}
 ) => {
+    const [show, setShow] = useState('hide');
     let date
 
     if (ipfs.timestamp === '' || Number(ipfs.timestamp) === 0) {
@@ -13,6 +14,11 @@ const RepositoryLayout = (
         date = new Date(Number(ipfs.timestamp) * 1000).toISOString().split('T')[0];
     }
     const owner = repository.owner.slice(0, 5) + '...' + repository.owner.slice(repository.owner.length - 5, repository.owner.length)
+
+    const handleCopy = async () => {
+        await navigator.clipboard.writeText(ipfs.external_url);
+        setShow("show");
+    }
 
     return (
         <>
@@ -23,6 +29,16 @@ const RepositoryLayout = (
                         <div className={"input-group mt-3"}>
                             <span className={"input-group-text"}>Clone</span>
                             <samp className={"input-group-text user-select-all"}>git clone {ipfs.external_url}</samp>
+                            <span className={"btn btn-primary"} id="liveToastBtn" onClick={handleCopy}>Copy</span>
+                        </div>
+                        <div className="toast-container position-fixed bottom-0 end-0 p-3">
+                            <div id="liveToast" className={`toast fade ${show}`} role="alert" aria-live="assertive"
+                                 aria-atomic="true">
+                                <div className="toast-header bg-success">
+                                    <strong className="me-auto text-light">Text copied successfully!</strong>
+                                    <button type="button" className="btn-close" onClick={() => setShow('hide')}/>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
