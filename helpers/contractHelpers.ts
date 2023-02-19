@@ -33,6 +33,22 @@ export const createRepo = async (name: string, description: string) => {
     return {ok: false};
 }
 
+export const forkRepo = async (name: string, description: string, url: string) => {
+    const contract = await getContractWithSigner();
+
+    if (contract) {
+        try {
+            const tx = await contract.forkRepository(name, description, url);
+            await tx.wait();
+            return {ok: true};
+        } catch (error) {
+            console.error(`Fork repo error: ${error}`);
+        }
+    }
+
+    return {ok: false};
+}
+
 export const getRepository = async (id: string) => {
     const contract = getContractWithoutSigner();
     if (contract) {
@@ -43,7 +59,8 @@ export const getRepository = async (id: string) => {
             name: repo.name,
             description: repo.description,
             ipfs: repo.IPFS,
-            lastUpdate: repo.lastUpdate.toString()
+            lastUpdate: repo.lastUpdate.toString(),
+            forkedFrom: repo.forkedFrom
         }
     }
 
@@ -54,6 +71,7 @@ export const getRepository = async (id: string) => {
         description: "-",
         ipfs: "-",
         lastUpdate: '-',
+        forkedFrom: "-"
     };
 }
 
@@ -99,7 +117,8 @@ const _createRepoArr = (repos: RepositoryType[]) => {
             name: repo.name,
             description: repo.description,
             ipfs: repo.ipfs,
-            lastUpdate: repo.lastUpdate.toString()
+            lastUpdate: repo.lastUpdate.toString(),
+            forkedFrom: repo.forkedFrom
         })
     }
 

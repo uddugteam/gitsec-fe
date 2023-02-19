@@ -19,7 +19,8 @@ const RepositoryList = (
                     {allRepositories.map(repo =>
                         <tr key={repo.id}>
                             <th scope="row"><Link onClick={() => setLoading(true)} href={`/repository/${repo.id}`}>{repo.name}</Link></th>
-                            <td className={"w-75"}>{getTimeDifference(repo.lastUpdate)}</td>
+                            <td>{getTimeDifference(repo.lastUpdate)}</td>
+                            <td className={"w-50"}><a href={repo.forkedFrom}>{repo.forkedFrom.split('https://')[1]}</a></td>
                             <td><button
                                 className={"btn btn-danger"}
                                 disabled={signerAddress !== repo.owner}
