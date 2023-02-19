@@ -27,6 +27,4 @@ const Overlay = styled.div<{show: boolean}>`
   outline: 0;
 `;
 
-//${(props) => (props.show ? 'visible' : 'hidden')}
-
 export default Loading;
