@@ -35,7 +35,7 @@ const RepositoryLayout = (
                             <div id="liveToast" className={`toast fade ${show}`} role="alert" aria-live="assertive"
                                  aria-atomic="true">
                                 <div className="toast-header bg-success">
-                                    <strong className="me-auto text-light">Text copied successfully!</strong>
+                                    <strong className="me-auto text-light">Clone cmd copied!</strong>
                                     <button type="button" className="btn-close" onClick={() => setShow('hide')}/>
                                 </div>
                             </div>
