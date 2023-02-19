@@ -5,4 +5,5 @@ export interface RepositoryType {
     description: string,
     ipfs: string,
     lastUpdate: string,
+    forkedFrom: string,
 }

@@ -57,7 +57,10 @@ export default function Home() {
             <Layout links={links}>
                 {isAlert && <Alert closeAlert={handleCloseAlert} type={alertType} text={alertText}/>}
                 <h2 className={"mt-3"}>All Repositories</h2>
-                <Link className={"btn btn-success mt-3"} href={"/new"}>New repository</Link><br/>
+                <div className="d-grid gap-2 d-md-block">
+                    <Link className={"btn btn-success m-1"} href={"/new"}>New repository</Link>
+                    <Link className={"btn btn-primary m-1"} href={"/import"}>Fork repository</Link>
+                </div>
                 <RepositoryList
                     handleDeleteRepository={handleDeleteRepository}
                     allRepositories={allRepositories}

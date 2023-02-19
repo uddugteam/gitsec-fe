@@ -53,7 +53,7 @@ const New = () => {
                 {isAlert && <Alert closeAlert={handleCloseAlert} type={alertType} text={alertText}/>}
                 <h2 className={"mt-3"}>Create new repository</h2>
                 <p className={"mt-3"}>A repository contains all project files, including the revision history. Already have a project
-                    repository elsewhere? <Link href={"/import"}>Import a repository.</Link></p>
+                    repository elsewhere? <Link href={"/import"}>Fork a repository.</Link></p>
                 <hr/>
                 <form onSubmit={event => handleNewRepository(event)}>
                     <div className={"input-group mt-3"}>

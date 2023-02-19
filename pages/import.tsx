@@ -1,25 +1,63 @@
 import Layout from "@/components/Layout";
 import Link from "next/link";
-import {useState} from "react";
+import React, {FormEvent, useState} from "react";
+import {forkRepo} from "@/helpers/contractHelpers";
+import Loading from "@/components/Loading";
+import Alert from "@/components/alerts/Alert";
 
 const Import = () => {
     const [url, setUrl] = useState("");
     const [name, setName] = useState("");
+    const [description, setDescription] = useState("");
+    const [loading, setLoading] = useState(false);
+    const [isAlert, setIsAlert] = useState(false);
+    const [alertType, setAlertType] = useState("");
+    const [alertText, setAlertText] = useState("");
 
     const links =
         <ol className="breadcrumb">
             <li className="breadcrumb-item"><Link className={"link-light"} href="/">Uddugteam</Link></li>
             <li className="breadcrumb-item"><Link className={"link-light"} href="/new">New repository</Link></li>
-            <li className="breadcrumb-item active">Import</li>
+            <li className="breadcrumb-item active">Fork</li>
         </ol>;
+
+    const handleForkRepository = async (event: FormEvent) => {
+        setLoading(true);
+        event.preventDefault();
+
+        const result = await forkRepo(name, description, url);
+
+        if (result.ok) {
+            setAlertType("success");
+            setAlertText("Repository forked!");
+            setIsAlert(true);
+            setName("");
+            setDescription("");
+            setUrl("");
+        } else {
+            setAlertType("danger");
+            setAlertText("Error, please try again");
+            setIsAlert(true);
+        }
+
+        setLoading(false);
+    }
+
+    const handleCloseAlert = () => {
+        setAlertText("");
+        setAlertType("");
+        setIsAlert(false);
+    }
 
     return (
         <Layout links={links}>
-            <h2 className={"mt-3"}>Import your GitHub project</h2>
-            <p>Import all files, including the revision history, from another version control system.</p>
+            <Loading show={loading}/>
+            {isAlert && <Alert closeAlert={handleCloseAlert} type={alertType} text={alertText}/>}
+            <h2 className={"mt-3"}>Fork GitHub project from any public repository</h2>
+            <p>Import all files, including the revision history, from another git-based code hosting.</p>
             <hr/>
-            <form>
-                <label htmlFor="url" className="form-label mt-3">Your old repository’s clone URL</label>
+            <form onSubmit={event => handleForkRepository(event)}>
+                <label htmlFor="url" className="form-label mt-3">Repository’s clone URL</label>
                 <input
                     type={"url"}
                     className={"form-control"}
@@ -41,7 +79,15 @@ const Import = () => {
                         required={true}
                     />
                 </div>
-                <button className={"btn btn-success mt-4"} type={"submit"}>Import</button>
+                <textarea
+                    className={"form-control mt-3"}
+                    rows={3}
+                    id={"description"}
+                    value={description}
+                    onChange={event => setDescription(event.target.value)}
+                    placeholder={"Repository description..."}
+                />
+                <button className={"btn btn-success mt-4"} type={"submit"}>Fork</button>
             </form>
         </Layout>
     );
