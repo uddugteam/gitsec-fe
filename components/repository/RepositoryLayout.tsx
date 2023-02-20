@@ -16,7 +16,7 @@ const RepositoryLayout = (
     const owner = repository.owner.slice(0, 5) + '...' + repository.owner.slice(repository.owner.length - 5, repository.owner.length)
 
     const handleCopy = async () => {
-        await navigator.clipboard.writeText(ipfs.external_url);
+        await navigator.clipboard.writeText(`git clone ${ipfs.external_url}`);
         setShow("show");
     }
 
