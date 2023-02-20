@@ -2,20 +2,40 @@ import Layout from "@/components/Layout";
 import Link from "next/link";
 import RepositoryLayout from "@/components/repository/RepositoryLayout";
 import CodeViewer from "@/components/repositories/CodeViewer";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import {RepositoryType} from "@/types/repositoryType";
 import {getRepository} from "@/helpers/contractHelpers";
 import {GetServerSideProps} from "next";
 import {IpfsType} from "@/types/ipfsType";
 import Loading from "@/components/Loading";
+import Alert from "@/components/alerts/Alert";
 
 const FileName = ({data}: {data: Data}) => {
-    const [ipfs] = useState(data.ipfs);
+    const [fileContent] = useState(data.fileContent);
     const [repo] = useState(data.repo);
     const [name] = useState(data.name);
     const [author] = useState(data.author);
     const [fileIpfs] = useState(data.fileIpfs);
+    const [error] = useState(data.error);
     const [loading, setLoading] = useState(false);
+    const [isAlert, setIsAlert] = useState(false);
+    const [alertType, setAlertType] = useState("");
+    const [alertText, setAlertText] = useState("");
+
+    useEffect(() => {
+        if (error) {
+            setAlertText(error);
+            setAlertType("danger");
+            setIsAlert(true)
+            console.error(error);
+        }
+    }, [error])
+
+    const handleCloseAlert = () => {
+        setAlertText("");
+        setAlertType("");
+        setIsAlert(false);
+    }
 
     const links =
         <ol className="breadcrumb">
@@ -28,9 +48,13 @@ const FileName = ({data}: {data: Data}) => {
         <>
             <Loading show={loading}/>
             <Layout links={links}>
-                <RepositoryLayout repository={repo} ipfs={fileIpfs} author={author}>
-                    {ipfs ? <CodeViewer code={ipfs} name={name}/> : <p>Loading...</p>}
-                </RepositoryLayout>
+                {isAlert && <Alert closeAlert={handleCloseAlert} type={alertType} text={alertText}/>}
+                {fileIpfs && name ?
+                    <RepositoryLayout repository={repo} ipfs={fileIpfs} author={author}>
+                        {fileContent ? <CodeViewer code={fileContent} name={name}/> : <p>Loading...</p>}
+                    </RepositoryLayout>
+                    : null
+                }
             </Layout>
         </>
     );
@@ -38,31 +62,70 @@ const FileName = ({data}: {data: Data}) => {
 
 type Data = {
     repo: RepositoryType,
-    ipfs: string
-    name: string,
-    fileIpfs: IpfsType,
-    author: string
+    fileContent: string | null,
+    name: string | null,
+    fileIpfs: IpfsType | null,
+    author: string | null,
+    error: string | null
 }
 
 export const getServerSideProps: GetServerSideProps<{ data: Data }> = async (context) => {
     const hash = await context.query.fileName;
     const id = await context.query.repoId;
 
-    const repo = await getRepository(id ? id.toString() : "0");
+    if (!id) return { notFound: true };
+
+    const repo = await getRepository(id.toString());
+
     const res = await fetch(`${process.env.IPFS_PROVIDER}/${hash}`);
-    const resJson = await JSON.parse(await res.text());
-    const name = resJson.name;
-    const author = resJson.author;
-    const res2 = await fetch(`${process.env.IPFS_PROVIDER}/${resJson.hash}`);
-    const ipfs = await res2.text();
+
+    if (!res.ok) {
+        return {
+            props: {
+                data: {
+                    fileIpfs: null,
+                    fileContent: null,
+                    repo: repo,
+                    name: null,
+                    author: null,
+                    error: `Error fetching file description: ${res.statusText}`
+                },
+            },
+        }
+    }
+
+    const fileDescription = await JSON.parse(await res.text());
+    const name = fileDescription.name;
+    const author = fileDescription.author;
+
+    const res2 = await fetch(`${process.env.IPFS_PROVIDER}/${fileDescription.hash}`);
+
+    if (!res2.ok) {
+        return {
+            props: {
+                data: {
+                    fileIpfs: fileDescription,
+                    fileContent: null,
+                    repo: repo,
+                    name: name,
+                    author: author,
+                    error: `Error fetching file content: ${res.statusText}`
+                },
+            },
+        }
+    }
+
+    const fileContent = await res2.text();
+
     return {
         props: {
             data: {
-                fileIpfs: resJson,
-                ipfs: ipfs,
+                fileIpfs: fileDescription,
+                fileContent: fileContent,
                 repo: repo,
                 name: name,
                 author: author,
+                error: null
             },
         },
     }
