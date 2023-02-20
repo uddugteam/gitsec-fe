@@ -23,8 +23,8 @@ export const createRepo = async (name: string, description: string) => {
     if (contract) {
         try {
             const tx = await contract.createRepository(name, description);
-            await tx.wait();
-            return {ok: true};
+            const result = await tx.wait();
+            return {ok: true, id: result.events[1].args[0].toString()};
         } catch (error) {
             console.error(`Create new repo error: ${error}`);
         }
@@ -39,8 +39,8 @@ export const forkRepo = async (name: string, description: string, url: string) =
     if (contract) {
         try {
             const tx = await contract.forkRepository(name, description, url);
-            await tx.wait();
-            return {ok: true};
+            const result = await tx.wait();
+            return {ok: true, id: result.events[1].args[0].toString()};
         } catch (error) {
             console.error(`Fork repo error: ${error}`);
         }

@@ -4,6 +4,7 @@ import React, {FormEvent, useState} from "react";
 import {forkRepo} from "@/helpers/contractHelpers";
 import Loading from "@/components/Loading";
 import Alert from "@/components/alerts/Alert";
+import {useRouter} from "next/router";
 
 const Fork = () => {
     const [url, setUrl] = useState("");
@@ -13,6 +14,7 @@ const Fork = () => {
     const [isAlert, setIsAlert] = useState(false);
     const [alertType, setAlertType] = useState("");
     const [alertText, setAlertText] = useState("");
+    const router = useRouter();
 
     const links =
         <ol className="breadcrumb">
@@ -28,12 +30,7 @@ const Fork = () => {
         const result = await forkRepo(name, description, url);
 
         if (result.ok) {
-            setAlertType("success");
-            setAlertText("Repository forked!");
-            setIsAlert(true);
-            setName("");
-            setDescription("");
-            setUrl("");
+            await router.push(`/repository/${result.id}`);
         } else {
             setAlertType("danger");
             setAlertText("Error, please try again");

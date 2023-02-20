@@ -4,6 +4,7 @@ import {FormEvent, useState} from "react";
 import {createRepo} from "@/helpers/contractHelpers";
 import Alert from "@/components/alerts/Alert";
 import Loading from "@/components/Loading";
+import {useRouter} from "next/router";
 
 const New = () => {
     const [name, setName] = useState("");
@@ -12,6 +13,7 @@ const New = () => {
     const [alertType, setAlertType] = useState("");
     const [alertText, setAlertText] = useState("");
     const [loading, setLoading] = useState(false);
+    const router = useRouter();
 
     const handleCloseAlert = () => {
         setAlertText("");
@@ -20,17 +22,13 @@ const New = () => {
     }
 
     const handleNewRepository = async (event: FormEvent) => {
-        setLoading(true);
         event.preventDefault();
+        setLoading(true);
 
         const result = await createRepo(name, description);
 
         if (result.ok) {
-            setAlertType("success");
-            setAlertText("Repository created!");
-            setIsAlert(true);
-            setName("");
-            setDescription("");
+            await router.push(`/repository/${result.id}`);
         } else {
             setAlertType("danger");
             setAlertText("Error, please try again");
